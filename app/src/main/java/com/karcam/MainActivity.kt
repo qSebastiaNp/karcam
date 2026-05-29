@@ -2,7 +2,9 @@ package com.karcam
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -20,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -102,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         photoDir.mkdirs()
 
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val photoFile = File(photoDir, "KarCam_$timestamp.jpg")
+        val photoFile = File(photoDir, "Speiseplan_$timestamp.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
@@ -133,8 +136,20 @@ class MainActivity : AppCompatActivity() {
         binding.imagePreview.visibility = View.VISIBLE
         binding.previewButtons.visibility = View.VISIBLE
 
-        val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+        val bitmap = ensurePortrait(photoFile)
         binding.imagePreview.setImageBitmap(bitmap)
+    }
+
+    private fun ensurePortrait(photoFile: File): Bitmap {
+        val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+        if (bitmap.width <= bitmap.height) return bitmap
+
+        val matrix = Matrix().apply { postRotate(90f) }
+        val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        FileOutputStream(photoFile).use { out ->
+            rotated.compress(Bitmap.CompressFormat.JPEG, 95, out)
+        }
+        return rotated
     }
 
     private fun retakePhoto() {
@@ -152,24 +167,32 @@ class MainActivity : AppCompatActivity() {
         val photoFile = capturedPhotoFile ?: return
 
         binding.previewButtons.visibility = View.GONE
-        binding.uploadProgress.visibility = View.VISIBLE
+        binding.uploadOverlay.visibility = View.VISIBLE
         binding.tvStatus.text = getString(R.string.uploading)
+        binding.uploadProgress.progress = 0
+        binding.tvProgressPercent.text = getString(R.string.progress_text, 0)
 
         CoroutineScope(Dispatchers.Main).launch {
             val result = withContext(Dispatchers.IO) {
-                FtpUploader.upload(photoFile)
+                FtpUploader.upload(photoFile) { percentage ->
+                    launch(Dispatchers.Main) {
+                        binding.uploadProgress.progress = percentage
+                        binding.tvProgressPercent.text = getString(R.string.progress_text, percentage)
+                    }
+                }
             }
-
-            binding.uploadProgress.visibility = View.GONE
 
             if (result.success) {
+                binding.uploadProgress.progress = 100
+                binding.tvProgressPercent.text = getString(R.string.progress_text, 100)
                 binding.tvStatus.text = getString(R.string.upload_success)
+                binding.tvStatus.postDelayed({ finish() }, 2000)
             } else {
+                binding.uploadProgress.visibility = View.GONE
+                binding.tvProgressPercent.visibility = View.GONE
                 binding.tvStatus.text = getString(R.string.upload_failed, result.errorMessage)
+                binding.tvStatus.postDelayed({ retakePhoto() }, 3000)
             }
-            binding.tvStatus.visibility = View.VISIBLE
-
-            binding.tvStatus.postDelayed({ finish() }, 3000)
         }
     }
 }

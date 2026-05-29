@@ -1,6 +1,14 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -14,11 +22,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "FTP_HOST", "\"${project.findProperty("FTP_HOST") ?: ""}\"")
-        buildConfigField("String", "FTP_PORT", "\"${project.findProperty("FTP_PORT") ?: "21"}\"")
-        buildConfigField("String", "FTP_USERNAME", "\"${project.findProperty("FTP_USERNAME") ?: ""}\"")
-        buildConfigField("String", "FTP_PASSWORD", "\"${project.findProperty("FTP_PASSWORD") ?: ""}\"")
-        buildConfigField("String", "FTP_DESTINATION_PATH", "\"${project.findProperty("FTP_DESTINATION_PATH") ?: "/"}\"")
+        buildConfigField("String", "FTP_HOST", "\"${localProperties.getProperty("FTP_HOST") ?: ""}\"")
+        buildConfigField("String", "FTP_PORT", "\"${localProperties.getProperty("FTP_PORT") ?: "21"}\"")
+        buildConfigField("String", "FTP_USERNAME", "\"${localProperties.getProperty("FTP_USERNAME") ?: ""}\"")
+        buildConfigField("String", "FTP_PASSWORD", "\"${localProperties.getProperty("FTP_PASSWORD") ?: ""}\"")
+        buildConfigField("String", "FTP_DESTINATION_PATH", "\"${localProperties.getProperty("FTP_DESTINATION_PATH") ?: "/"}\"")
     }
 
     buildTypes {
@@ -55,6 +63,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("commons-net:commons-net:3.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

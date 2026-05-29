@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
@@ -79,29 +80,51 @@
 
     </LinearLayout>
 
-    <!-- Upload Progress -->
-    <ProgressBar
-        android:id="@+id/uploadProgress"
-        android:layout_width="wrap_content"
+    <!-- Upload Progress Overlay -->
+    <LinearLayout
+        android:id="@+id/uploadOverlay"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:background="@drawable/bg_upload_overlay"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Status Text -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/uploadProgress"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@string/uploading"
+            android:layout_marginBottom="16dp" />
+
+        <ProgressBar
+            android:id="@+id/uploadProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/white" />
+
+        <TextView
+            android:id="@+id/tvProgressPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            tools:text="45%" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

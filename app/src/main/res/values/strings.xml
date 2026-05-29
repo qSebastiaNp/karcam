@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KarCam</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="photo_preview">Photo Preview</string>
-    <string name="confirm">Confirm</string>
-    <string name="retake">Retake</string>
-    <string name="uploading">Uploading photo…</string>
-    <string name="upload_success">Photo uploaded successfully!</string>
-    <string name="upload_failed">Upload failed: %1$s</string>
-    <string name="capture_failed">Photo capture failed: %1$s</string>
-    <string name="permission_denied">Camera permission is required to use this app.</string>
-    <string name="camera_init_failed">Failed to initialize camera.</string>
+    <string name="app_name">Speiseplan-Kamera</string>
+    <string name="take_photo">Foto aufnehmen</string>
+    <string name="photo_preview">Fotovorschau</string>
+    <string name="confirm">Hochladen</string>
+    <string name="retake">Neu aufnehmen</string>
+    <string name="uploading">Foto wird hochgeladen…</string>
+    <string name="upload_success">Foto erfolgreich hochgeladen!</string>
+    <string name="upload_failed">Upload fehlgeschlagen: %1$s</string>
+    <string name="capture_failed">Fotoaufnahme fehlgeschlagen: %1$s</string>
+    <string name="permission_denied">Kameraberechtigung wird benötigt, um diese App zu nutzen.</string>
+    <string name="camera_init_failed">Kamera konnte nicht initialisiert werden.</string>
+    <string name="progress_text">%1$d%%</string>
 </resources>
